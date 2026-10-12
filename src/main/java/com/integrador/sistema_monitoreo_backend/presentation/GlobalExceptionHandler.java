@@ -1,0 +1,33 @@
+package com.integrador.sistema_monitoreo_backend.presentation;
+
+import com.integrador.sistema_monitoreo_backend.domain.CredencialesInvalidasException;
+import com.integrador.sistema_monitoreo_backend.domain.ReglaNegocioException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    public record ErrorResponse(String mensaje) {}
+
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse credenciales(CredencialesInvalidasException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(ReglaNegocioException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse reglaNegocio(ReglaNegocioException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse validacion(MethodArgumentNotValidException ex) {
+        return new ErrorResponse("Datos inválidos: revisa los campos del formulario");
+    }
+}
