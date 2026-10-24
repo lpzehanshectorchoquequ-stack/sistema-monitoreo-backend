@@ -43,6 +43,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/api/pacientes/mis-hijos").hasRole("TUTOR")
+                .requestMatchers("/api/pacientes/**").hasAnyRole("PSICOLOGO", "ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

@@ -1,6 +1,8 @@
 package com.integrador.sistema_monitoreo_backend.presentation;
 
+import com.integrador.sistema_monitoreo_backend.domain.AccesoDenegadoException;
 import com.integrador.sistema_monitoreo_backend.domain.CredencialesInvalidasException;
+import com.integrador.sistema_monitoreo_backend.domain.RecursoNoEncontradoException;
 import com.integrador.sistema_monitoreo_backend.domain.ReglaNegocioException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +18,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CredencialesInvalidasException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse credenciales(CredencialesInvalidasException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(AccesoDenegadoException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse accesoDenegado(AccesoDenegadoException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse noEncontrado(RecursoNoEncontradoException ex) {
         return new ErrorResponse(ex.getMessage());
     }
 
