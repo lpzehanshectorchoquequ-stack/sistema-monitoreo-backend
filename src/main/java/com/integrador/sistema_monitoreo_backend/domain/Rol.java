@@ -1,10 +1,13 @@
 package com.integrador.sistema_monitoreo_backend.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "roles")
-public class Rol {
+@SQLRestriction("eliminado = false")
+public class Rol extends Auditable {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
