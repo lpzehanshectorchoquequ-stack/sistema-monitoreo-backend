@@ -15,7 +15,11 @@ import java.util.List;
 @Service
 public class GestionarPacientesUseCase {
 
-    public record Datos(String nombre, LocalDate fechaNacimiento, String motivoConsulta, Integer tutorId) {}
+    public record Datos(String nombre, LocalDate fechaNacimiento, String motivoConsulta, Integer tutorId,
+                        String genero, String fortalezas, String dificultades) {}
+
+    public record DatosHijo(String nombre, LocalDate fechaNacimiento, String genero,
+                            String motivoConsulta, Integer psicologoId) {}
 
     private final PacienteRepository pacienteRepository;
     private final UsuarioRepository usuarioRepository;
@@ -41,6 +45,10 @@ public class GestionarPacientesUseCase {
         return usuarioRepository.listarPorRol("Tutor");
     }
 
+    public List<Usuario> listarPsicologos() {
+        return usuarioRepository.listarPorRol("Psicologo");
+    }
+
     public Paciente obtener(Integer id, String correo, String rol) {
         Paciente paciente = pacienteRepository.buscarPorId(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado"));
@@ -59,6 +67,23 @@ public class GestionarPacientesUseCase {
                 .orElseThrow(() -> new ReglaNegocioException("Usuario no encontrado"));
         Paciente paciente = new Paciente();
         aplicar(paciente, datos);
+        paciente.setPsicologo(psicologo);
+        return pacienteRepository.guardar(paciente);
+    }
+
+    public Paciente registrarHijo(DatosHijo datos, String correoTutor) {
+        Usuario tutor = usuarioRepository.buscarPorCorreo(correoTutor)
+                .orElseThrow(() -> new ReglaNegocioException("Usuario no encontrado"));
+        Usuario psicologo = usuarioRepository.buscarPorId(datos.psicologoId())
+                .filter(u -> "Psicologo".equals(u.getRol().getNombreRol()))
+                .orElseThrow(() -> new ReglaNegocioException("La psicóloga indicada no existe"));
+
+        Paciente paciente = new Paciente();
+        paciente.setNombre(datos.nombre());
+        paciente.setFechaNacimiento(datos.fechaNacimiento());
+        paciente.setGenero(datos.genero());
+        paciente.setMotivoConsulta(datos.motivoConsulta());
+        paciente.setTutor(tutor);
         paciente.setPsicologo(psicologo);
         return pacienteRepository.guardar(paciente);
     }
@@ -83,5 +108,8 @@ public class GestionarPacientesUseCase {
         paciente.setFechaNacimiento(datos.fechaNacimiento());
         paciente.setMotivoConsulta(datos.motivoConsulta());
         paciente.setTutor(tutor);
+        paciente.setGenero(datos.genero() == null || datos.genero().isBlank() ? null : datos.genero());
+        paciente.setFortalezas(datos.fortalezas());
+        paciente.setDificultades(datos.dificultades());
     }
 }
