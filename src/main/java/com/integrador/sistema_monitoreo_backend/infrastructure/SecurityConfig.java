@@ -41,10 +41,12 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                 .requestMatchers("/api/pacientes/mis-hijos").hasRole("TUTOR")
                 .requestMatchers("/api/pacientes/**").hasAnyRole("PSICOLOGO", "ADMIN")
+                .requestMatchers("/api/instrumentos/**").hasAnyRole("PSICOLOGO", "ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
