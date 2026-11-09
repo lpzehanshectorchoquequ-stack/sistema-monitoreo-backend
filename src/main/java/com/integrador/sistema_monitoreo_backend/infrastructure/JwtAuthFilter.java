@@ -16,6 +16,8 @@ import java.util.List;
 
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+    private static final String RUTA_CAMBIO = "/api/auth/cambiar-contrasena";
+
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthFilter(JwtTokenProvider jwtTokenProvider) {
@@ -31,9 +33,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (encabezado != null && encabezado.startsWith("Bearer ")) {
             try {
                 Claims claims = jwtTokenProvider.leerClaims(encabezado.substring(7));
+
+                Boolean cambio = claims.get("cambio", Boolean.class);
+                if (Boolean.TRUE.equals(cambio) && !RUTA_CAMBIO.equals(request.getRequestURI())) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.getWriter().write(
+                            "{\"mensaje\":\"Debes cambiar tu contraseña temporal antes de continuar\"}");
+                    return;
+                }
+
                 String correo = claims.getSubject();
                 String rol = claims.get("rol", String.class);
-
                 var autoridad = new SimpleGrantedAuthority("ROLE_" + rol.toUpperCase());
                 var autenticacion = new UsernamePasswordAuthenticationToken(correo, null, List.of(autoridad));
                 SecurityContextHolder.getContext().setAuthentication(autenticacion);

@@ -5,6 +5,7 @@ import com.integrador.sistema_monitoreo_backend.domain.CredencialesInvalidasExce
 import com.integrador.sistema_monitoreo_backend.domain.RecursoNoEncontradoException;
 import com.integrador.sistema_monitoreo_backend.domain.ReglaNegocioException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -42,6 +43,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse validacion(MethodArgumentNotValidException ex) {
-        return new ErrorResponse("Datos inválidos: revisa los campos del formulario");
+        String mensaje = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .findFirst()
+                .orElse("Datos inválidos: revisa los campos del formulario");
+        return new ErrorResponse(mensaje);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse formatoInvalido(HttpMessageNotReadableException ex) {
+        return new ErrorResponse("Formato de datos inválido");
     }
 }

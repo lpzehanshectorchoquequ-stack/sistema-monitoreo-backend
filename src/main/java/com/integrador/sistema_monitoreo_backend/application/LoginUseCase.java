@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginUseCase {
 
-    public record Resultado(String token, String nombre, String correo, String rol) {}
+    public record Resultado(String token, String nombre, String correo, String rol,
+                            boolean debeCambiarContrasena) {}
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,6 +34,8 @@ public class LoginUseCase {
         }
 
         String token = tokenProvider.generarToken(usuario);
-        return new Resultado(token, usuario.getNombre(), usuario.getCorreo(), usuario.getRol().getNombreRol());
+        return new Resultado(token, usuario.getNombre(), usuario.getCorreo(),
+                usuario.getRol().getNombreRol(),
+                Boolean.TRUE.equals(usuario.getDebeCambiarContrasena()));
     }
 }

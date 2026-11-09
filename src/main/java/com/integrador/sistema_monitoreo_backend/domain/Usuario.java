@@ -29,6 +29,14 @@ public class Usuario extends Auditable {
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
+    @Column(name = "debe_cambiar_contrasena", nullable = false)
+    private Boolean debeCambiarContrasena = false;
+
+    // Solo para tutores: la psicóloga que creó la cuenta
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_psicologo")
+    private Usuario psicologo;
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public Rol getRol() { return rol; }
@@ -41,4 +49,8 @@ public class Usuario extends Auditable {
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
     public Boolean getActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
+    public Boolean getDebeCambiarContrasena() { return debeCambiarContrasena; }
+    public void setDebeCambiarContrasena(Boolean debeCambiarContrasena) { this.debeCambiarContrasena = debeCambiarContrasena; }
+    public Usuario getPsicologo() { return psicologo; }
+    public void setPsicologo(Usuario psicologo) { this.psicologo = psicologo; }
 }

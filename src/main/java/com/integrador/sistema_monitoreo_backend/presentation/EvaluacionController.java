@@ -8,6 +8,9 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +23,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class EvaluacionController {
 
-    public record RespuestaRequest(@NotNull Integer preguntaId,
-                                   @NotNull @Min(0) @Max(3) Integer valor) {}
+    public record RespuestaRequest(
+            @NotNull @Positive Integer preguntaId,
+            @NotNull @Min(value = 0, message = "La respuesta debe estar entre 0 y 3")
+            @Max(value = 3, message = "La respuesta debe estar entre 0 y 3") Integer valor
+    ) {}
 
-    public record EvaluacionRequest(@NotNull Integer instrumentoId,
-                                    @NotEmpty @Valid List<RespuestaRequest> respuestas,
-                                    String observaciones) {}
+    public record EvaluacionRequest(
+            @NotNull(message = "Selecciona un instrumento") @Positive Integer instrumentoId,
+            @NotEmpty(message = "Faltan las respuestas")
+            @Size(max = 100, message = "Demasiadas respuestas") @Valid List<RespuestaRequest> respuestas,
+            @Size(max = 500, message = "Las observaciones admiten hasta 500 caracteres")
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String observaciones
+    ) {}
 
     private final GestionarEvaluacionesUseCase useCase;
 

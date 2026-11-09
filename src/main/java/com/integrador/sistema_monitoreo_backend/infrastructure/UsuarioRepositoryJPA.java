@@ -10,4 +10,5 @@ public interface UsuarioRepositoryJPA extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findByCorreo(String correo);
     boolean existsByCorreo(String correo);
     List<Usuario> findByRol_NombreRolOrderByNombreAsc(String nombreRol);
+    List<Usuario> findByPsicologo_CorreoOrderByNombreAsc(String correo);
 }

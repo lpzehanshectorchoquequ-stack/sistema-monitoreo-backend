@@ -42,8 +42,9 @@ public class SecurityConfig {
             .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/api/auth/cambiar-contrasena").authenticated()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "PSICOLOGO")
                 .requestMatchers("/api/pacientes/mis-hijos").hasRole("TUTOR")
                 .requestMatchers("/api/pacientes/psicologos").hasRole("TUTOR")
                 .requestMatchers("/api/pacientes/**").hasAnyRole("PSICOLOGO", "ADMIN")

@@ -30,6 +30,7 @@ public class JwtTokenProvider implements TokenProvider {
         return Jwts.builder()
                 .subject(usuario.getCorreo())
                 .claim("rol", usuario.getRol().getNombreRol())
+                .claim("cambio", Boolean.TRUE.equals(usuario.getDebeCambiarContrasena()))
                 .issuedAt(ahora)
                 .expiration(new Date(ahora.getTime() + expiracionMs))
                 .signWith(clave)

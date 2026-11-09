@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,20 +22,42 @@ import java.util.List;
 public class PacienteController {
 
     public record PacienteRequest(
-            @NotBlank String nombre,
-            @NotNull @PastOrPresent LocalDate fechaNacimiento,
-            String motivoConsulta,
-            @NotNull Integer tutorId,
-            @Pattern(regexp = "^(NINO|NINA)?$") String genero,
-            String fortalezas,
-            String dificultades) {}
+            @NotBlank(message = "Ingresa el nombre del paciente")
+            @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
+            @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String nombre,
+
+            @NotNull(message = "Ingresa la fecha de nacimiento")
+            @PastOrPresent(message = "La fecha de nacimiento no puede ser futura") LocalDate fechaNacimiento,
+
+            @Size(max = 500, message = "El motivo de consulta admite hasta 500 caracteres")
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String motivoConsulta,
+
+            @NotNull(message = "Selecciona un tutor")
+            @Positive(message = "Selecciona un tutor") Integer tutorId,
+
+            @Pattern(regexp = "^(NINO|NINA)?$", message = "Género no válido") String genero,
+
+            @Size(max = 500, message = "Las fortalezas admiten hasta 500 caracteres")
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String fortalezas,
+
+            @Size(max = 500, message = "Las áreas de apoyo admiten hasta 500 caracteres")
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String dificultades
+    ) {}
 
     public record HijoRequest(
-            @NotBlank String nombre,
-            @NotNull @PastOrPresent LocalDate fechaNacimiento,
-            @NotBlank @Pattern(regexp = "^(NINO|NINA)$") String genero,
-            String motivoConsulta,
-            @NotNull Integer psicologoId) {}
+            @NotBlank(message = "Ingresa el nombre")
+            @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
+            @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String nombre,
+
+            @NotNull(message = "Ingresa la fecha de nacimiento")
+            @PastOrPresent(message = "La fecha de nacimiento no puede ser futura") LocalDate fechaNacimiento,
+
+            @NotBlank(message = "Elige si es niño o niña")
+            @Pattern(regexp = "^(NINO|NINA)$", message = "Género no válido") String genero,
+
+            @Size(max = 500, message = "El motivo admite hasta 500 caracteres")
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String motivoConsulta
+    ) {}
 
     public record PacienteResponse(Integer id, String nombre, LocalDate fechaNacimiento, String genero,
                                    String motivoConsulta, String fortalezas, String dificultades,
@@ -61,7 +85,7 @@ public class PacienteController {
     @ResponseStatus(HttpStatus.CREATED)
     public PacienteResponse registrarHijo(@Valid @RequestBody HijoRequest r, Authentication auth) {
         var datos = new GestionarPacientesUseCase.DatosHijo(
-                r.nombre(), r.fechaNacimiento(), r.genero(), r.motivoConsulta(), r.psicologoId());
+                r.nombre(), r.fechaNacimiento(), r.genero(), r.motivoConsulta());
         return aRespuesta(useCase.registrarHijo(datos, auth.getName()));
     }
 

@@ -2,6 +2,7 @@ package com.integrador.sistema_monitoreo_backend.infrastructure;
 
 import com.integrador.sistema_monitoreo_backend.domain.Usuario;
 import com.integrador.sistema_monitoreo_backend.domain.UsuarioRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,6 +35,16 @@ public class UsuarioRepositoryAdapter implements UsuarioRepository {
     @Override
     public List<Usuario> listarPorRol(String nombreRol) {
         return jpa.findByRol_NombreRolOrderByNombreAsc(nombreRol);
+    }
+
+    @Override
+    public List<Usuario> listarTodos() {
+        return jpa.findAll(Sort.by("nombre"));
+    }
+
+    @Override
+    public List<Usuario> listarPorPsicologo(String correoPsicologo) {
+        return jpa.findByPsicologo_CorreoOrderByNombreAsc(correoPsicologo);
     }
 
     @Override

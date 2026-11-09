@@ -10,16 +10,19 @@ import com.integrador.sistema_monitoreo_backend.domain.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Service
 public class GestionarPacientesUseCase {
 
+    private static final int EDAD_MAXIMA = 18;
+
     public record Datos(String nombre, LocalDate fechaNacimiento, String motivoConsulta, Integer tutorId,
                         String genero, String fortalezas, String dificultades) {}
 
-    public record DatosHijo(String nombre, LocalDate fechaNacimiento, String genero,
-                            String motivoConsulta, Integer psicologoId) {}
+    public record DatosHijo(String nombre, LocalDate fechaNacimiento,
+                            String genero, String motivoConsulta) {}
 
     private final PacienteRepository pacienteRepository;
     private final UsuarioRepository usuarioRepository;
@@ -72,11 +75,19 @@ public class GestionarPacientesUseCase {
     }
 
     public Paciente registrarHijo(DatosHijo datos, String correoTutor) {
+        if (!pacienteRepository.listarPorTutor(correoTutor).isEmpty()) {
+            throw new ReglaNegocioException("Esta cuenta ya tiene un niño o niña registrado");
+        }
+
+        validarFecha(datos.fechaNacimiento());
+
         Usuario tutor = usuarioRepository.buscarPorCorreo(correoTutor)
                 .orElseThrow(() -> new ReglaNegocioException("Usuario no encontrado"));
-        Usuario psicologo = usuarioRepository.buscarPorId(datos.psicologoId())
-                .filter(u -> "Psicologo".equals(u.getRol().getNombreRol()))
-                .orElseThrow(() -> new ReglaNegocioException("La psicóloga indicada no existe"));
+        Usuario psicologo = tutor.getPsicologo();
+        if (psicologo == null) {
+            throw new ReglaNegocioException(
+                    "Tu cuenta aún no tiene una psicóloga asignada. Comunícate con tu psicóloga.");
+        }
 
         Paciente paciente = new Paciente();
         paciente.setNombre(datos.nombre());
@@ -101,9 +112,12 @@ public class GestionarPacientesUseCase {
     }
 
     private void aplicar(Paciente paciente, Datos datos) {
+        validarFecha(datos.fechaNacimiento());
+
         Usuario tutor = usuarioRepository.buscarPorId(datos.tutorId())
                 .filter(u -> "Tutor".equals(u.getRol().getNombreRol()))
                 .orElseThrow(() -> new ReglaNegocioException("El tutor indicado no existe"));
+
         paciente.setNombre(datos.nombre());
         paciente.setFechaNacimiento(datos.fechaNacimiento());
         paciente.setMotivoConsulta(datos.motivoConsulta());
@@ -111,5 +125,15 @@ public class GestionarPacientesUseCase {
         paciente.setGenero(datos.genero() == null || datos.genero().isBlank() ? null : datos.genero());
         paciente.setFortalezas(datos.fortalezas());
         paciente.setDificultades(datos.dificultades());
+    }
+
+    private void validarFecha(LocalDate fecha) {
+        LocalDate hoy = LocalDate.now();
+        if (fecha.isAfter(hoy)) {
+            throw new ReglaNegocioException("La fecha de nacimiento no puede ser futura");
+        }
+        if (Period.between(fecha, hoy).getYears() > EDAD_MAXIMA) {
+            throw new ReglaNegocioException("La edad máxima permitida es " + EDAD_MAXIMA + " años");
+        }
     }
 }
