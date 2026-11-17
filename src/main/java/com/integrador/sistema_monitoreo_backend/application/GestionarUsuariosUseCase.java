@@ -21,7 +21,7 @@ public class GestionarUsuariosUseCase {
 
     public record UsuarioCreado(UsuarioVista usuario, String contrasenaTemporal) {}
 
-    // Sin caracteres que se confunden (0/O, 1/l/I)
+    // Sin caracteres que se confunden (0/O, 1/I)
     private static final String ALFABETO = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
 
     private final UsuarioRepository usuarioRepository;
