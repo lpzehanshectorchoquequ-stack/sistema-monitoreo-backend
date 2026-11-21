@@ -27,7 +27,12 @@ public class Pregunta extends Auditable {
     private String subescala;
 
     public Integer getId() { return id; }
+    public Instrumento getInstrumento() { return instrumento; }
+    public void setInstrumento(Instrumento instrumento) { this.instrumento = instrumento; }
     public Integer getOrden() { return orden; }
+    public void setOrden(Integer orden) { this.orden = orden; }
     public String getTexto() { return texto; }
+    public void setTexto(String texto) { this.texto = texto; }
     public String getSubescala() { return subescala; }
+    public void setSubescala(String subescala) { this.subescala = subescala; }
 }

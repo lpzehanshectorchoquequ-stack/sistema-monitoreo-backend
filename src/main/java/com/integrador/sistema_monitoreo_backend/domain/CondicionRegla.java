@@ -28,7 +28,13 @@ public class CondicionRegla extends Auditable {
     @Column(name = "valor", nullable = false)
     private BigDecimal valor;
 
+    public Integer getId() { return id; }
+    public Regla getRegla() { return regla; }
+    public void setRegla(Regla regla) { this.regla = regla; }
     public String getHecho() { return hecho; }
+    public void setHecho(String hecho) { this.hecho = hecho; }
     public String getOperador() { return operador; }
+    public void setOperador(String operador) { this.operador = operador; }
     public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
 }

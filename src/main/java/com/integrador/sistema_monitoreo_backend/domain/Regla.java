@@ -35,14 +35,21 @@ public class Regla extends Auditable {
     @Column(name = "recomendacion")
     private String recomendacion;
 
-    @OneToMany(mappedBy = "regla", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "regla", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CondicionRegla> condiciones = new ArrayList<>();
 
     public Integer getId() { return id; }
+    public Instrumento getInstrumento() { return instrumento; }
+    public void setInstrumento(Instrumento instrumento) { this.instrumento = instrumento; }
     public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
     public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public String getNivel() { return nivel; }
+    public void setNivel(String nivel) { this.nivel = nivel; }
     public String getHechoDerivado() { return hechoDerivado; }
+    public void setHechoDerivado(String hechoDerivado) { this.hechoDerivado = hechoDerivado; }
     public String getRecomendacion() { return recomendacion; }
+    public void setRecomendacion(String recomendacion) { this.recomendacion = recomendacion; }
     public List<CondicionRegla> getCondiciones() { return condiciones; }
 }

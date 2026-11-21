@@ -6,4 +6,5 @@ import java.util.Optional;
 public interface InstrumentoRepository {
     List<Instrumento> listarTodos();
     Optional<Instrumento> buscarPorId(Integer id);
+    Instrumento guardar(Instrumento instrumento);
 }

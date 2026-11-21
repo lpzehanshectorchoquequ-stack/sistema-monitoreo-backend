@@ -29,4 +29,9 @@ public class EvaluacionRepositoryAdapter implements EvaluacionRepository {
     public List<Evaluacion> listarTodas() {
         return jpa.findAll();
     }
+
+    @Override
+    public boolean existePorInstrumento(Integer instrumentoId) {
+        return jpa.existsByInstrumento_Id(instrumentoId);
+    }
 }

@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/pacientes/psicologos").hasRole("TUTOR")
                 .requestMatchers("/api/pacientes/**").hasAnyRole("PSICOLOGO", "ADMIN")
                 .requestMatchers("/api/instrumentos/**").hasAnyRole("PSICOLOGO", "ADMIN")
+                .requestMatchers("/api/tests/**").hasAnyRole("PSICOLOGO", "ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

@@ -26,4 +26,10 @@ public class InstrumentoRepositoryAdapter implements InstrumentoRepository {
     public Optional<Instrumento> buscarPorId(Integer id) {
         return jpa.findById(id);
     }
+
+    @Override
+    public Instrumento guardar(Instrumento instrumento) {
+        // saveAndFlush asegura que las preguntas nuevas ya tengan su id al responder
+        return jpa.saveAndFlush(instrumento);
+    }
 }
