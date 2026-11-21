@@ -16,7 +16,8 @@ import java.util.List;
 @Service
 public class GestionarPacientesUseCase {
 
-    private static final int EDAD_MAXIMA = 18;
+    private static final int EDAD_MINIMA = 6;
+    private static final int EDAD_MAXIMA = 12;
 
     public record Datos(String nombre, LocalDate fechaNacimiento, String motivoConsulta, Integer tutorId,
                         String genero, String fortalezas, String dificultades) {}
@@ -132,8 +133,10 @@ public class GestionarPacientesUseCase {
         if (fecha.isAfter(hoy)) {
             throw new ReglaNegocioException("La fecha de nacimiento no puede ser futura");
         }
-        if (Period.between(fecha, hoy).getYears() > EDAD_MAXIMA) {
-            throw new ReglaNegocioException("La edad máxima permitida es " + EDAD_MAXIMA + " años");
+        int edad = Period.between(fecha, hoy).getYears();
+        if (edad < EDAD_MINIMA || edad > EDAD_MAXIMA) {
+            throw new ReglaNegocioException(
+                    "La edad del niño o niña debe estar entre " + EDAD_MINIMA + " y " + EDAD_MAXIMA + " años");
         }
     }
 }
