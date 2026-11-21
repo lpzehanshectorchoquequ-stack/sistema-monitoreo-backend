@@ -24,4 +24,9 @@ public class EvaluacionRepositoryAdapter implements EvaluacionRepository {
     public List<Evaluacion> listarPorPaciente(Integer pacienteId) {
         return jpa.findByPaciente_IdOrderByFechaEvaluacionDescIdDesc(pacienteId);
     }
+
+    @Override
+    public List<Evaluacion> listarTodas() {
+        return jpa.findAll();
+    }
 }

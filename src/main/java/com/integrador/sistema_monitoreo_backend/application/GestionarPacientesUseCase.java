@@ -66,6 +66,21 @@ public class GestionarPacientesUseCase {
         return paciente;
     }
 
+    public Paciente obtenerParaLectura(Integer id, String correo, String rol) {
+        Paciente paciente = pacienteRepository.buscarPorId(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Paciente no encontrado"));
+
+        boolean esAdmin = "ADMIN".equals(rol);
+        boolean esSuPsicologo = paciente.getPsicologo() != null
+                && paciente.getPsicologo().getCorreo().equals(correo);
+        boolean esSuTutor = paciente.getTutor() != null
+                && paciente.getTutor().getCorreo().equals(correo);
+        if (!esAdmin && !esSuPsicologo && !esSuTutor) {
+            throw new AccesoDenegadoException();
+        }
+        return paciente;
+    }
+
     public Paciente crear(Datos datos, String correoPsicologo) {
         Usuario psicologo = usuarioRepository.buscarPorCorreo(correoPsicologo)
                 .orElseThrow(() -> new ReglaNegocioException("Usuario no encontrado"));

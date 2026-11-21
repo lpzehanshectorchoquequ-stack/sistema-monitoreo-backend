@@ -24,6 +24,8 @@ public class Respuesta extends Auditable {
     @Column(name = "valor", nullable = false)
     private Integer valor;
 
+    public Integer getValor() { return valor; }
+    public Pregunta getPregunta() { return pregunta; }
     public void setEvaluacion(Evaluacion evaluacion) { this.evaluacion = evaluacion; }
     public void setPregunta(Pregunta pregunta) { this.pregunta = pregunta; }
     public void setValor(Integer valor) { this.valor = valor; }
