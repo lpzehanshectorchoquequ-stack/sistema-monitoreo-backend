@@ -91,12 +91,7 @@ public class GestionarPacientesUseCase {
     }
 
     public Paciente registrarHijo(DatosHijo datos, String correoTutor) {
-        if (!pacienteRepository.listarPorTutor(correoTutor).isEmpty()) {
-            throw new ReglaNegocioException("Esta cuenta ya tiene un niño o niña registrado");
-        }
-
         validarFecha(datos.fechaNacimiento());
-
         Usuario tutor = usuarioRepository.buscarPorCorreo(correoTutor)
                 .orElseThrow(() -> new ReglaNegocioException("Usuario no encontrado"));
         Usuario psicologo = tutor.getPsicologo();
