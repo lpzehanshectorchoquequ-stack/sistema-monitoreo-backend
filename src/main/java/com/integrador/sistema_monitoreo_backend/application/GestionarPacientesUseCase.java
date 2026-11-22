@@ -16,14 +16,14 @@ import java.util.List;
 @Service
 public class GestionarPacientesUseCase {
 
+    public record Datos(String nombre, String apellido, LocalDate fechaNacimiento, String motivoConsulta,
+                        Integer tutorId, String genero, String fortalezas, String dificultades) {}
+
+    public record DatosHijo(String nombre, String apellido, LocalDate fechaNacimiento, String genero,
+                            String motivoConsulta) {}
+
     private static final int EDAD_MINIMA = 6;
     private static final int EDAD_MAXIMA = 12;
-
-    public record Datos(String nombre, LocalDate fechaNacimiento, String motivoConsulta, Integer tutorId,
-                        String genero, String fortalezas, String dificultades) {}
-
-    public record DatosHijo(String nombre, LocalDate fechaNacimiento,
-                            String genero, String motivoConsulta) {}
 
     private final PacienteRepository pacienteRepository;
     private final UsuarioRepository usuarioRepository;
@@ -101,7 +101,8 @@ public class GestionarPacientesUseCase {
         }
 
         Paciente paciente = new Paciente();
-        paciente.setNombre(datos.nombre());
+        paciente.setNombre(datos.nombre().trim());
+        paciente.setApellido(datos.apellido().trim());
         paciente.setFechaNacimiento(datos.fechaNacimiento());
         paciente.setGenero(datos.genero());
         paciente.setMotivoConsulta(datos.motivoConsulta());
@@ -124,12 +125,11 @@ public class GestionarPacientesUseCase {
 
     private void aplicar(Paciente paciente, Datos datos) {
         validarFecha(datos.fechaNacimiento());
-
         Usuario tutor = usuarioRepository.buscarPorId(datos.tutorId())
                 .filter(u -> "Tutor".equals(u.getRol().getNombreRol()))
                 .orElseThrow(() -> new ReglaNegocioException("El tutor indicado no existe"));
-
-        paciente.setNombre(datos.nombre());
+        paciente.setNombre(datos.nombre().trim());
+        paciente.setApellido(datos.apellido().trim());
         paciente.setFechaNacimiento(datos.fechaNacimiento());
         paciente.setMotivoConsulta(datos.motivoConsulta());
         paciente.setTutor(tutor);

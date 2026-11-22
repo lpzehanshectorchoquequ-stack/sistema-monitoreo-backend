@@ -236,7 +236,7 @@ public class FlujoEvaluacionUseCase {
         boolean verNivel = APROBADA.equals(e.getEstado())
                 || (POR_REVISAR.equals(e.getEstado()) && !"TUTOR".equals(rol));
         String nivel = verNivel && !e.getConclusiones().isEmpty() ? e.getConclusiones().get(0).getNivel() : null;
-        return new ResumenEvaluacion(e.getId(), e.getPaciente().getId(), e.getPaciente().getNombre(),
+        return new ResumenEvaluacion(e.getId(), e.getPaciente().getId(), e.getPaciente().getNombreCompleto(),
                 e.getInstrumento().getNombre(), e.getInstrumento().getTrastorno(), e.getEstado(),
                 e.getFechaEvaluacion(), nivel);
     }
@@ -268,11 +268,11 @@ public class FlujoEvaluacionUseCase {
                     Arrays.asList(c.getExplicacion().split("\n")));
         }
 
-        return new DetalleEvaluacion(e.getId(), e.getPaciente().getId(), e.getPaciente().getNombre(),
+        return new DetalleEvaluacion(e.getId(), e.getPaciente().getId(), e.getPaciente().getNombreCompleto(),
                 e.getInstrumento().getNombre(), e.getInstrumento().getTrastorno(), e.getInstrumento().getDescripcion(),
                 e.getEstado(), e.getFechaEvaluacion(), e.getObservaciones(), e.getComentarioPsicologa(),
-                e.getRespondidoPor() == null ? null : e.getRespondidoPor().getNombre(),
-                e.getAprobadoPor() == null ? null : e.getAprobadoPor().getNombre(),
+                e.getRespondidoPor() == null ? null : e.getRespondidoPor().getNombreCompleto(),
+                e.getAprobadoPor() == null ? null : e.getAprobadoPor().getNombreCompleto(),
                 e.getCambiosRespuestas(), puedeResponder, puedeAprobar, verResultado,
                 preguntas, respuestas, conclusion, verResultado ? calcularAreas(e) : List.of());
     }

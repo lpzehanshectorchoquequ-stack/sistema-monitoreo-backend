@@ -6,8 +6,8 @@ import com.integrador.sistema_monitoreo_backend.domain.Usuario;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
@@ -25,43 +25,39 @@ public class PacienteController {
             @NotBlank(message = "Ingresa el nombre del paciente")
             @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
             @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String nombre,
-
+            @NotBlank(message = "Ingresa el apellido del paciente")
+            @Size(min = 2, max = 100, message = "El apellido debe tener entre 2 y 100 caracteres")
+            @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String apellido,
             @NotNull(message = "Ingresa la fecha de nacimiento")
             @PastOrPresent(message = "La fecha de nacimiento no puede ser futura") LocalDate fechaNacimiento,
-
             @Size(max = 500, message = "El motivo de consulta admite hasta 500 caracteres")
             @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String motivoConsulta,
-
             @NotNull(message = "Selecciona un tutor")
             @Positive(message = "Selecciona un tutor") Integer tutorId,
-
             @Pattern(regexp = "^(NINO|NINA)?$", message = "Género no válido") String genero,
-
             @Size(max = 500, message = "Las fortalezas admiten hasta 500 caracteres")
             @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String fortalezas,
-
             @Size(max = 500, message = "Las áreas de apoyo admiten hasta 500 caracteres")
-            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String dificultades
-    ) {}
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String dificultades) {}
 
     public record HijoRequest(
             @NotBlank(message = "Ingresa el nombre")
             @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
             @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String nombre,
-
+            @NotBlank(message = "Ingresa el apellido")
+            @Size(min = 2, max = 100, message = "El apellido debe tener entre 2 y 100 caracteres")
+            @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String apellido,
             @NotNull(message = "Ingresa la fecha de nacimiento")
             @PastOrPresent(message = "La fecha de nacimiento no puede ser futura") LocalDate fechaNacimiento,
-
             @NotBlank(message = "Elige si es niño o niña")
             @Pattern(regexp = "^(NINO|NINA)$", message = "Género no válido") String genero,
-
             @Size(max = 500, message = "El motivo admite hasta 500 caracteres")
-            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String motivoConsulta
-    ) {}
+            @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String motivoConsulta) {}
 
-    public record PacienteResponse(Integer id, String nombre, LocalDate fechaNacimiento, String genero,
-                                   String motivoConsulta, String fortalezas, String dificultades,
-                                   Integer tutorId, String tutorNombre, String psicologoNombre) {}
+    public record PacienteResponse(Integer id, String nombre, String nombrePila, String apellido,
+                                   LocalDate fechaNacimiento, String genero, String motivoConsulta,
+                                   String fortalezas, String dificultades, Integer tutorId,
+                                   String tutorNombre, String psicologoNombre) {}
 
     public record PersonaResponse(Integer id, String nombre, String correo) {}
 
@@ -85,7 +81,7 @@ public class PacienteController {
     @ResponseStatus(HttpStatus.CREATED)
     public PacienteResponse registrarHijo(@Valid @RequestBody HijoRequest r, Authentication auth) {
         var datos = new GestionarPacientesUseCase.DatosHijo(
-                r.nombre(), r.fechaNacimiento(), r.genero(), r.motivoConsulta());
+                r.nombre(), r.apellido(), r.fechaNacimiento(), r.genero(), r.motivoConsulta());
         return aRespuesta(useCase.registrarHijo(datos, auth.getName()));
     }
 
@@ -124,8 +120,8 @@ public class PacienteController {
     }
 
     private GestionarPacientesUseCase.Datos aDatos(PacienteRequest r) {
-        return new GestionarPacientesUseCase.Datos(r.nombre(), r.fechaNacimiento(), r.motivoConsulta(),
-                r.tutorId(), r.genero(), r.fortalezas(), r.dificultades());
+        return new GestionarPacientesUseCase.Datos(r.nombre(), r.apellido(), r.fechaNacimiento(),
+                r.motivoConsulta(), r.tutorId(), r.genero(), r.fortalezas(), r.dificultades());
     }
 
     private String rol(Authentication auth) {
@@ -133,17 +129,17 @@ public class PacienteController {
     }
 
     private PersonaResponse aPersona(Usuario u) {
-        return new PersonaResponse(u.getId(), u.getNombre(), u.getCorreo());
+        return new PersonaResponse(u.getId(), u.getNombreCompleto(), u.getCorreo());
     }
 
     private PacienteResponse aRespuesta(Paciente p) {
         Usuario tutor = p.getTutor();
         Usuario psicologo = p.getPsicologo();
         return new PacienteResponse(
-                p.getId(), p.getNombre(), p.getFechaNacimiento(), p.getGenero(),
-                p.getMotivoConsulta(), p.getFortalezas(), p.getDificultades(),
+                p.getId(), p.getNombreCompleto(), p.getNombre(), p.getApellido(), p.getFechaNacimiento(),
+                p.getGenero(), p.getMotivoConsulta(), p.getFortalezas(), p.getDificultades(),
                 tutor != null ? tutor.getId() : null,
-                tutor != null ? tutor.getNombre() : null,
-                psicologo != null ? psicologo.getNombre() : null);
+                tutor != null ? tutor.getNombreCompleto() : null,
+                psicologo != null ? psicologo.getNombreCompleto() : null);
     }
 }

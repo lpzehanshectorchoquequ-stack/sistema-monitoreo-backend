@@ -34,7 +34,7 @@ public class LoginUseCase {
         }
 
         String token = tokenProvider.generarToken(usuario);
-        return new Resultado(token, usuario.getNombre(), usuario.getCorreo(),
+        return new Resultado(token, usuario.getNombreCompleto(), usuario.getCorreo(),
                 usuario.getRol().getNombreRol(),
                 Boolean.TRUE.equals(usuario.getDebeCambiarContrasena()));
     }

@@ -42,7 +42,7 @@ public class CambiarContrasenaUseCase {
         Usuario guardado = usuarioRepository.guardar(usuario);
 
         // Token nuevo, ya sin la marca de contraseña temporal
-        return new LoginUseCase.Resultado(tokenProvider.generarToken(guardado), guardado.getNombre(),
+        return new LoginUseCase.Resultado(tokenProvider.generarToken(guardado), guardado.getNombreCompleto(),
                 guardado.getCorreo(), guardado.getRol().getNombreRol(), false);
     }
 }

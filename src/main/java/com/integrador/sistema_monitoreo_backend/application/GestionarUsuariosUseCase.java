@@ -16,12 +16,12 @@ import java.util.List;
 @Service
 public class GestionarUsuariosUseCase {
 
-    public record UsuarioVista(Integer id, String nombre, String correo, String rol, boolean activo,
-                               boolean pendienteCambio, String psicologoNombre) {}
+    public record UsuarioVista(Integer id, String nombre, String nombrePila, String apellido, String correo,
+                               String rol, boolean activo, boolean pendienteCambio, String psicologoNombre) {}
 
     public record UsuarioCreado(UsuarioVista usuario, String contrasenaTemporal) {}
 
-    // Sin caracteres que se confunden (0/O, 1/I)
+    // Sin caracteres que se confunden (0/O, 1/l/I)
     private static final String ALFABETO = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
 
     private final UsuarioRepository usuarioRepository;
@@ -44,7 +44,7 @@ public class GestionarUsuariosUseCase {
         return usuarios.stream().map(this::aVista).toList();
     }
 
-    public UsuarioCreado crear(String nombre, String correo, String nombreRol,
+    public UsuarioCreado crear(String nombre, String apellido, String correo, String nombreRol,
                                String correoCreador, String rolCreador) {
         if (usuarioRepository.existePorCorreo(correo)) {
             throw new ReglaNegocioException("El correo ya está registrado");
@@ -65,7 +65,8 @@ public class GestionarUsuariosUseCase {
 
         String temporal = generarContrasenaTemporal();
         Usuario usuario = new Usuario();
-        usuario.setNombre(nombre);
+        usuario.setNombre(nombre.trim());
+        usuario.setApellido(apellido.trim());
         usuario.setCorreo(correo);
         usuario.setRol(rol);
         usuario.setContrasena(passwordEncoder.encode(temporal));
@@ -118,9 +119,10 @@ public class GestionarUsuariosUseCase {
     }
 
     private UsuarioVista aVista(Usuario u) {
-        return new UsuarioVista(u.getId(), u.getNombre(), u.getCorreo(), u.getRol().getNombreRol(),
+        return new UsuarioVista(u.getId(), u.getNombreCompleto(), u.getNombre(), u.getApellido(), u.getCorreo(),
+                u.getRol().getNombreRol(),
                 Boolean.TRUE.equals(u.getActivo()),
                 Boolean.TRUE.equals(u.getDebeCambiarContrasena()),
-                u.getPsicologo() != null ? u.getPsicologo().getNombre() : null);
+                u.getPsicologo() != null ? u.getPsicologo().getNombreCompleto() : null);
     }
 }

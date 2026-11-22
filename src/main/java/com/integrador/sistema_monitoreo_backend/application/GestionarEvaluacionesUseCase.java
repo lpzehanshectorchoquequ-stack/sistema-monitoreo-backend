@@ -143,7 +143,7 @@ public class GestionarEvaluacionesUseCase {
             conclusion = new ConclusionVista(c.getTrastorno(), c.getNivel(), c.getRecomendacion(),
                     Arrays.asList(c.getExplicacion().split("\n")));
         }
-        return new EvaluacionVista(e.getId(), e.getPaciente().getId(), e.getPaciente().getNombre(),
+        return new EvaluacionVista(e.getId(), e.getPaciente().getId(), e.getPaciente().getNombreCompleto(),
                 e.getInstrumento().getNombre(), e.getInstrumento().getEstadoValidacion(),
                 e.getFechaEvaluacion(), e.getObservaciones(), conclusion);
     }

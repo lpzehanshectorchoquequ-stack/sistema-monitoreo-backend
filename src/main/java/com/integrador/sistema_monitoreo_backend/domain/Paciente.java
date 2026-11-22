@@ -26,6 +26,9 @@ public class Paciente extends Auditable {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
+    @Column(name = "apellido", nullable = false)
+    private String apellido;
+
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
@@ -41,6 +44,12 @@ public class Paciente extends Auditable {
     @Column(name = "dificultades")
     private String dificultades;
 
+    public String getNombreCompleto() {
+        String n = nombre == null ? "" : nombre;
+        String a = apellido == null ? "" : apellido;
+        return (n + " " + a).trim();
+    }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public Usuario getTutor() { return tutor; }
@@ -49,6 +58,8 @@ public class Paciente extends Auditable {
     public void setPsicologo(Usuario psicologo) { this.psicologo = psicologo; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
     public LocalDate getFechaNacimiento() { return fechaNacimiento; }
     public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
     public String getMotivoConsulta() { return motivoConsulta; }

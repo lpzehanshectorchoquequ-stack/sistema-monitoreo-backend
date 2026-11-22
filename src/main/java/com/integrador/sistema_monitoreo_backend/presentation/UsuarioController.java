@@ -22,14 +22,14 @@ public class UsuarioController {
             @NotBlank(message = "Ingresa el nombre")
             @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
             @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String nombre,
-
+            @NotBlank(message = "Ingresa el apellido")
+            @Size(min = 2, max = 100, message = "El apellido debe tener entre 2 y 100 caracteres")
+            @Pattern(regexp = Validaciones.NOMBRE, message = Validaciones.MSG_NOMBRE) String apellido,
             @NotBlank(message = "Ingresa el correo")
             @Size(max = 100, message = "El correo admite hasta 100 caracteres")
             @Pattern(regexp = Validaciones.CORREO, message = Validaciones.MSG_CORREO) String correo,
-
             @NotBlank(message = "Selecciona un rol")
-            @Pattern(regexp = "^(Admin|Psicologo|Tutor)$", message = "Rol no válido") String rol
-    ) {}
+            @Pattern(regexp = "^(Admin|Psicologo|Tutor)$", message = "Rol no válido") String rol) {}
 
     public record EstadoRequest(@NotNull Boolean activo) {}
 
@@ -47,7 +47,7 @@ public class UsuarioController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UsuarioCreado crear(@Valid @RequestBody CrearUsuarioRequest r, Authentication auth) {
-        return useCase.crear(r.nombre(), r.correo(), r.rol(), auth.getName(), rol(auth));
+        return useCase.crear(r.nombre(), r.apellido(), r.correo(), r.rol(), auth.getName(), rol(auth));
     }
 
     @PostMapping("/{id}/restablecer-contrasena")

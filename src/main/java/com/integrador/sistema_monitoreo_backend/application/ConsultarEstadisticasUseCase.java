@@ -78,7 +78,7 @@ public class ConsultarEstadisticasUseCase {
             puntos.add(new PuntoEvolucion(e.getId(), e.getFechaEvaluacion(), e.getInstrumento().getNombre(),
                     e.getInstrumento().getTrastorno(), nivelDe(e), puntaje, maximo, porcentaje, sintomas, total));
         }
-        return new EvolucionVista(paciente.getId(), paciente.getNombre(), puntos);
+        return new EvolucionVista(paciente.getId(), paciente.getNombreCompleto(), puntos);
     }
 
     @Transactional(readOnly = true)
@@ -107,7 +107,7 @@ public class ConsultarEstadisticasUseCase {
                 contar(misPacientes.stream().map(p -> p.getGenero() == null ? "SIN_DATO" : p.getGenero())),
                 esAdmin
                         ? contar(misPacientes.stream()
-                            .map(p -> p.getPsicologo() == null ? "Sin asignar" : p.getPsicologo().getNombre()))
+                            .map(p -> p.getPsicologo() == null ? "Sin asignar" : p.getPsicologo().getNombreCompleto()))
                         : List.of());
     }
 

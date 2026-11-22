@@ -64,7 +64,7 @@ class GestionarUsuariosUseCaseTest {
 
         // Act
         GestionarUsuariosUseCase.UsuarioCreado creado = useCase.crear(
-                "Familia Rojas", "familia.rojas@sistema.com", "Tutor", "psicologa@sistema.com", "PSICOLOGO");
+                "Familia", "Rojas", "familia.rojas@sistema.com", "Tutor", "psicologa@sistema.com", "PSICOLOGO");
 
         // Assert
         ArgumentCaptor<Usuario> guardado = ArgumentCaptor.forClass(Usuario.class);
@@ -91,7 +91,7 @@ class GestionarUsuariosUseCaseTest {
 
         // Act + Assert
         assertThatThrownBy(() -> useCase.crear(
-                "Otra Psicologa", "otra@sistema.com", "Psicologo", "psicologa@sistema.com", "PSICOLOGO"))
+                "Otra", "Psicologa", "otra@sistema.com", "Psicologo", "psicologa@sistema.com", "PSICOLOGO"))
                 .isInstanceOf(AccesoDenegadoException.class)
                 .hasMessageContaining("solo puede crear cuentas de tutor");
         verify(usuarioRepository, never()).guardar(any());
@@ -106,7 +106,7 @@ class GestionarUsuariosUseCaseTest {
 
         // Act + Assert
         assertThatThrownBy(() -> useCase.crear(
-                "Familia", "familia@sistema.com", "Tutor", "admin@sistema.com", "ADMIN"))
+                "Familia", "Perez", "familia@sistema.com", "Tutor", "admin@sistema.com", "ADMIN"))
                 .isInstanceOf(ReglaNegocioException.class)
                 .hasMessageContaining("los tutores los crea su");
         verify(usuarioRepository, never()).guardar(any());
@@ -120,7 +120,7 @@ class GestionarUsuariosUseCaseTest {
 
         // Act + Assert
         assertThatThrownBy(() -> useCase.crear(
-                "Tutor Repetido", "tutor@sistema.com", "Tutor", "psicologa@sistema.com", "PSICOLOGO"))
+                "Tutor", "Repetido", "tutor@sistema.com", "Tutor", "psicologa@sistema.com", "PSICOLOGO"))
                 .isInstanceOf(ReglaNegocioException.class)
                 .hasMessageContaining("registrado");
         verify(usuarioRepository, never()).guardar(any());
@@ -138,7 +138,7 @@ class GestionarUsuariosUseCaseTest {
 
         // Act
         GestionarUsuariosUseCase.UsuarioCreado creado = useCase.crear(
-                "Nueva Psicologa", "nueva@sistema.com", "Psicologo", "admin@sistema.com", "ADMIN");
+                "Nueva", "Psicologa", "nueva@sistema.com", "Psicologo", "admin@sistema.com", "ADMIN");
 
         // Assert
         ArgumentCaptor<Usuario> guardado = ArgumentCaptor.forClass(Usuario.class);
