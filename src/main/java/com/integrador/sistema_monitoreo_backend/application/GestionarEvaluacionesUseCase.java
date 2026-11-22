@@ -107,7 +107,10 @@ public class GestionarEvaluacionesUseCase {
     @Transactional(readOnly = true)
     public List<EvaluacionVista> historial(Integer pacienteId, String correo, String rol) {
         pacientes.obtener(pacienteId, correo, rol); // valida que tenga acceso a este paciente
-        return evaluacionRepository.listarPorPaciente(pacienteId).stream().map(this::aVista).toList();
+        return evaluacionRepository.listarPorPaciente(pacienteId).stream()
+                .filter(e -> "APROBADA".equals(e.getEstado()))
+                .map(this::aVista)
+                .toList();
     }
 
     private void validarRespuestas(Instrumento instrumento, Map<Integer, Integer> respuestas) {

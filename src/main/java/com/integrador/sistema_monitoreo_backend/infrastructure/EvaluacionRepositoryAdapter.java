@@ -5,6 +5,7 @@ import com.integrador.sistema_monitoreo_backend.domain.EvaluacionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EvaluacionRepositoryAdapter implements EvaluacionRepository {
@@ -18,6 +19,11 @@ public class EvaluacionRepositoryAdapter implements EvaluacionRepository {
     @Override
     public Evaluacion guardar(Evaluacion evaluacion) {
         return jpa.save(evaluacion);
+    }
+
+    @Override
+    public Optional<Evaluacion> buscarPorId(Integer id) {
+        return jpa.findById(id);
     }
 
     @Override

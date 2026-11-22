@@ -57,7 +57,9 @@ public class ConsultarEstadisticasUseCase {
         Paciente paciente = pacientes.obtenerParaLectura(pacienteId, correo, rol);
 
         // El repositorio entrega de la más nueva a la más antigua; la gráfica necesita lo contrario
-        List<Evaluacion> ordenadas = new ArrayList<>(evaluacionRepository.listarPorPaciente(pacienteId));
+        List<Evaluacion> ordenadas = new ArrayList<>(evaluacionRepository.listarPorPaciente(pacienteId).stream()
+                .filter(e -> "APROBADA".equals(e.getEstado()))
+                .toList());
         Collections.reverse(ordenadas);
 
         List<PuntoEvolucion> puntos = new ArrayList<>();
@@ -87,7 +89,7 @@ public class ConsultarEstadisticasUseCase {
                 : pacienteRepository.listarPorPsicologo(correo);
         Set<Integer> ids = misPacientes.stream().map(Paciente::getId).collect(Collectors.toSet());
         List<Evaluacion> evaluaciones = evaluacionRepository.listarTodas().stream()
-                .filter(e -> ids.contains(e.getPaciente().getId()))
+                .filter(e -> ids.contains(e.getPaciente().getId()) && "APROBADA".equals(e.getEstado()))
                 .toList();
         long tutores = esAdmin
                 ? usuarioRepository.listarPorRol("Tutor").size()

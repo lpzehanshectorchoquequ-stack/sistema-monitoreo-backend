@@ -1,6 +1,8 @@
 package com.integrador.sistema_monitoreo_backend.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
@@ -17,7 +19,8 @@ public class Respuesta extends Auditable {
     @JoinColumn(name = "id_evaluacion", nullable = false)
     private Evaluacion evaluacion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "id_pregunta", nullable = false)
     private Pregunta pregunta;
 
