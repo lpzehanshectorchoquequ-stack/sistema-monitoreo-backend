@@ -3,6 +3,8 @@ package com.integrador.sistema_monitoreo_backend.domain;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "usuarios")
 @SQLRestriction("eliminado = false")
@@ -40,6 +42,9 @@ public class Usuario extends Auditable {
     @JoinColumn(name = "id_psicologo")
     private Usuario psicologo;
 
+    @Column(name = "tarifa_consulta", nullable = false)
+    private BigDecimal tarifaConsulta = BigDecimal.ZERO;
+
     public String getNombreCompleto() {
         String n = nombre == null ? "" : nombre;
         String a = apellido == null ? "" : apellido;
@@ -64,4 +69,6 @@ public class Usuario extends Auditable {
     public void setDebeCambiarContrasena(Boolean debeCambiarContrasena) { this.debeCambiarContrasena = debeCambiarContrasena; }
     public Usuario getPsicologo() { return psicologo; }
     public void setPsicologo(Usuario psicologo) { this.psicologo = psicologo; }
+    public BigDecimal getTarifaConsulta() { return tarifaConsulta; }
+    public void setTarifaConsulta(BigDecimal tarifaConsulta) { this.tarifaConsulta = tarifaConsulta; }
 }
