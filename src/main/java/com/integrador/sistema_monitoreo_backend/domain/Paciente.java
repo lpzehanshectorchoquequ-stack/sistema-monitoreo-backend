@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "ninos")
@@ -15,6 +17,7 @@ public class Paciente extends Auditable {
     @Column(name = "id_nino")
     private Integer id;
 
+    // Tutor principal
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_tutor")
     private Usuario tutor;
@@ -44,10 +47,23 @@ public class Paciente extends Auditable {
     @Column(name = "dificultades")
     private String dificultades;
 
+    // Tutores adicionales (además del principal)
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    private List<VinculoTutor> vinculos = new ArrayList<>();
+
     public String getNombreCompleto() {
         String n = nombre == null ? "" : nombre;
         String a = apellido == null ? "" : apellido;
         return (n + " " + a).trim();
+    }
+
+    // ¿Esta cuenta es tutor de este niño? (principal o vinculado)
+    public boolean esTutor(String correo) {
+        if (tutor != null && tutor.getCorreo().equals(correo)) {
+            return true;
+        }
+        return vinculos.stream()
+                .anyMatch(v -> !Boolean.TRUE.equals(v.getEliminado()) && v.getTutor().getCorreo().equals(correo));
     }
 
     public Integer getId() { return id; }
@@ -70,4 +86,5 @@ public class Paciente extends Auditable {
     public void setFortalezas(String fortalezas) { this.fortalezas = fortalezas; }
     public String getDificultades() { return dificultades; }
     public void setDificultades(String dificultades) { this.dificultades = dificultades; }
+    public List<VinculoTutor> getVinculos() { return vinculos; }
 }

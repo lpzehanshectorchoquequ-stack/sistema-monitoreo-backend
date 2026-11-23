@@ -29,7 +29,7 @@ public class PacienteRepositoryAdapter implements PacienteRepository {
 
     @Override
     public List<Paciente> listarPorTutor(String correoTutor) {
-        return jpa.findByTutor_CorreoOrderByNombreAsc(correoTutor);
+        return jpa.buscarPorTutor(correoTutor);
     }
 
     @Override

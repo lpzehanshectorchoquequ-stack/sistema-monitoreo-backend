@@ -54,6 +54,13 @@ public class PacienteController {
             @Size(max = 500, message = "El motivo admite hasta 500 caracteres")
             @Pattern(regexp = Validaciones.TEXTO, message = Validaciones.MSG_TEXTO) String motivoConsulta) {}
 
+    public record VinculoRequest(
+            @NotNull(message = "Selecciona un tutor")
+            @Positive(message = "Selecciona un tutor") Integer tutorId,
+            @NotBlank(message = "Selecciona el parentesco")
+            @Pattern(regexp = "^(Madre|Padre|Abuelo/a|T\u00EDo/a|Hermano/a mayor|Otro)$",
+                    message = "Parentesco no válido") String parentesco) {}
+
     public record PacienteResponse(Integer id, String nombre, String nombrePila, String apellido,
                                    LocalDate fechaNacimiento, String genero, String motivoConsulta,
                                    String fortalezas, String dificultades, Integer tutorId,
@@ -117,6 +124,26 @@ public class PacienteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void eliminar(@PathVariable Integer id, Authentication auth) {
         useCase.eliminar(id, auth.getName(), rol(auth));
+    }
+
+    @GetMapping("/{id}/tutores")
+    public List<GestionarPacientesUseCase.TutorVinculado> tutoresDe(@PathVariable Integer id, Authentication auth) {
+        return useCase.listarTutoresDe(id, auth.getName(), rol(auth));
+    }
+
+    @PostMapping("/{id}/tutores")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<GestionarPacientesUseCase.TutorVinculado> vincularTutor(@PathVariable Integer id,
+                                                                        @Valid @RequestBody VinculoRequest r,
+                                                                        Authentication auth) {
+        return useCase.vincularTutor(id, r.tutorId(), r.parentesco(), auth.getName(), rol(auth));
+    }
+
+    @DeleteMapping("/{id}/tutores/{tutorId}")
+    public List<GestionarPacientesUseCase.TutorVinculado> desvincularTutor(@PathVariable Integer id,
+                                                                           @PathVariable Integer tutorId,
+                                                                           Authentication auth) {
+        return useCase.desvincularTutor(id, tutorId, auth.getName(), rol(auth));
     }
 
     private GestionarPacientesUseCase.Datos aDatos(PacienteRequest r) {

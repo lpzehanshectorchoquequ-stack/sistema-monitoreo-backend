@@ -227,7 +227,7 @@ public class FlujoEvaluacionUseCase {
             return p.getPsicologo() != null && p.getPsicologo().getCorreo().equals(correo);
         }
         if ("TUTOR".equals(rol)) {
-            return p.getTutor() != null && p.getTutor().getCorreo().equals(correo);
+            return p.esTutor(correo);
         }
         return false;
     }
