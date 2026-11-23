@@ -1,5 +1,6 @@
 package com.integrador.sistema_monitoreo_backend.infrastructure;
 
+import com.integrador.sistema_monitoreo_backend.application.RegistrarBitacoraUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -23,9 +24,11 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RegistrarBitacoraUseCase registrarBitacora;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, RegistrarBitacoraUseCase registrarBitacora) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.registrarBitacora = registrarBitacora;
     }
 
     @Bean
@@ -45,6 +48,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/cambiar-contrasena").authenticated()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/usuarios/**").hasAnyRole("ADMIN", "PSICOLOGO")
+                .requestMatchers("/api/bitacora/**").hasRole("ADMIN")
+                .requestMatchers("/api/respaldos/**").hasRole("ADMIN")
                 .requestMatchers("/api/horarios/**").hasRole("PSICOLOGO")
                 .requestMatchers("/api/estadisticas/resumen").hasAnyRole("PSICOLOGO", "ADMIN")
                 .requestMatchers("/api/estadisticas/citas").hasAnyRole("PSICOLOGO", "ADMIN")
@@ -56,7 +61,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/tests/**").hasAnyRole("PSICOLOGO", "ADMIN")
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(new BitacoraFilter(registrarBitacora), JwtAuthFilter.class);
         return http.build();
     }
 
